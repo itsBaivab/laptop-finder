@@ -140,12 +140,7 @@ if user_prompt is not None:
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Loading..."):
-            ai_response = conversational_rag_chain.invoke(
-        {"input": user_prompt},
-        config={
-            "configurable": {"session_id": "abc123"}
-        },  # constructs a key "abc123" in `store`.
-    )["answer"]
+            ai_response = conversational_rag_chain.invoke({"input": user_prompt},config={"configurable": {"session_id": "abc123"}},)["answer"]
             st.write(ai_response)
     new_ai_message = {"role": "assistant", "content": ai_response}
     st.session_state.messages.append(new_ai_message)
