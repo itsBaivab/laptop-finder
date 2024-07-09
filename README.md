@@ -28,11 +28,6 @@ Welcome to **Gadget Finder**, a webapp chatbot designed to provide laptop recomm
     pip install -r requirements.txt
     ```
 
-3. Run the Streamlit app:
-    ```bash
-    streamlit run gadgetfinder.py
-    ```
-
 ## Usage
 
 1. Open the webapp in your browser:
