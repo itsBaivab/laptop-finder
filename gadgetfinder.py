@@ -10,6 +10,7 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import google.generativeai as genai
+import streamlit as st
 
 llm=GoogleGenerativeAI(model="gemini-1.0-pro-latest")
 embeddings=HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLm-L6-v2", model_kwargs={'device':'cpu'})
@@ -78,11 +79,13 @@ question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
 rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 
 
-store={}
+if 'store' not in st.session_state:
+    st.session_state['store'] = {}
+    
 def get_session_history(session_id: str) -> BaseChatMessageHistory:
-    if session_id not in store:
-        store[session_id] = ChatMessageHistory()
-    return store[session_id]
+    if session_id not in st.session_state['store']:
+        st.session_state['store'][session_id] = ChatMessageHistory()
+    return st.session_state['store'][session_id]
 
 
 conversational_rag_chain = RunnableWithMessageHistory(
@@ -92,14 +95,57 @@ conversational_rag_chain = RunnableWithMessageHistory(
     history_messages_key="chat_history",
     output_messages_key="answer",
 )
-prompt=input("Enter your query:")
-while(prompt!="exit"):
-    print(conversational_rag_chain.invoke(
-        {"input": prompt},
+# prompt=input("Enter your query:")
+# while(prompt!="exit"):
+#     print(conversational_rag_chain.invoke(
+#         {"input": prompt},
+#         config={
+#             "configurable": {"session_id": "abc123"}
+#         },  # constructs a key "abc123" in `store`.
+#     )["answer"])
+#     print("\n")
+#     prompt=input()
+
+st.set_page_config(
+    page_title="Gadget Finder",
+    page_icon="🤖",
+    layout="wide"
+)
+
+
+st.title("Gadget Finder")
+
+
+# check for messages in session and create if not exists
+if "messages" not in st.session_state.keys():
+    st.session_state.messages = [
+        {"role": "assistant", "content": "Hello there, Tell me about the purpose of buying a laptop and your budget."}
+    ]
+
+
+# Display all messages
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
+
+
+user_prompt = st.chat_input()
+
+if user_prompt is not None:
+    st.session_state.messages.append({"role": "user", "content": user_prompt})
+    with st.chat_message("user"):
+        st.write(user_prompt)
+
+
+if st.session_state.messages[-1]["role"] != "assistant":
+    with st.chat_message("assistant"):
+        with st.spinner("Loading..."):
+            ai_response = conversational_rag_chain.invoke(
+        {"input": user_prompt},
         config={
             "configurable": {"session_id": "abc123"}
         },  # constructs a key "abc123" in `store`.
-    )["answer"])
-    print("\n")
-    prompt=input()
-
+    )["answer"]
+            st.write(ai_response)
+    new_ai_message = {"role": "assistant", "content": ai_response}
+    st.session_state.messages.append(new_ai_message)
