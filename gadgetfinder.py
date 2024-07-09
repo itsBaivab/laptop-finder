@@ -119,7 +119,7 @@ st.title("Gadget Finder")
 # check for messages in session and create if not exists
 if "messages" not in st.session_state.keys():
     st.session_state.messages = [
-        {"role": "assistant", "content": "Hello there, Tell me about the purpose of buying a laptop and your budget."}
+        {"role": "assistant", "content": "Hello there, Tell me about the purpose of buying a laptop and your budget in INR."}
     ]
 
 
