@@ -1,6 +1,6 @@
-# Gadget Finder
+# Laptop Finder
 
-Welcome to **Gadget Finder**, a webapp chatbot designed to provide laptop recommendations based on your budget and requirements. You can access the webapp [here](https://gadget-finder.streamlit.app/).
+Welcome to **Laptop Finder**, a webapp chatbot designed to provide laptop recommendations based on your budget and requirements. You can access the webapp [here](https://gadget-finder.streamlit.app/).
 
 ## Features
 
@@ -19,14 +19,33 @@ Welcome to **Gadget Finder**, a webapp chatbot designed to provide laptop recomm
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/gadget-finder.git
-    cd gadget-finder
+    git clone https://github.com/manit2004/laptop-finder.git
+    cd laptop-finder
     ```
-
-2. Install the required dependencies:
+2. Create and activate a Python virtual environment:
+    - **Windows**:
+        ```powershell
+        python -m venv venv
+        .\venv\Scripts\activate
+        ```
+    - **Linux**:
+        ```bash
+        python3 -m venv venv
+        source venv/bin/activate
+        ```
+3. Install the required dependencies:
     ```bash
     pip install -r requirements.txt
     ```
+4. Set the environment variable `GOOGLE_API_KEY` with your own Gemini API key which you can get for free from [here](https://aistudio.google.com/):
+    - **Windows**:
+        ```powershell
+        $env:GOOGLE_API_KEY = "your_gemini_api_key"
+        ```
+    - **Linux**:
+        ```bash
+        export GOOGLE_API_KEY="your_gemini_api_key"
+        ```
 
 ## Usage
 
@@ -55,7 +74,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [Streamlit](https://www.streamlit.io/) for providing an amazing platform to build the webapp.
 - All contributors and users for their valuable feedback and support.
-
----
-
-Happy Coding!
