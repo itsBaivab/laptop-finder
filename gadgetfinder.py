@@ -9,6 +9,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_google_genai import GoogleGenerativeAI
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
+from langchain import hub
 import google.generativeai as genai
 import streamlit as st
 
@@ -33,48 +34,7 @@ history_aware_retriever = create_history_aware_retriever(
     llm, retriever, contextualize_q_prompt
 )
 
-qa_system_prompt = """You are a chatbot that helps users find the perfect laptop based on their requirements and budget in INR. Follow these steps to interact with the user and provide them with the best recommendations:
-
-Greet the User:
-
-Start by greeting the user and briefly explaining that you will assist them in finding a suitable laptop based on their needs and budget.
-Ask for Requirements:
-
-Prompt the user to describe their requirements. For example:
-What will they use the laptop for? (e.g., general use, gaming, professional work, student needs, etc.)
-Do they have any specific features in mind? (e.g., touchscreen, high refresh rate, lightweight, long battery life, etc.)
-If the user provides vague information, ask follow-up questions to clarify their needs. For example:
-"Can you specify the main applications you will use on the laptop?"
-"Do you have a preference for any specific brand or operating system?"
-Ask for Budget:
-
-If the budget is not mentioned, ask the user to provide a budget range in INR.
-If the provided budget is too tight for the specified requirements, suggest slight adjustments and explain why a higher budget might be necessary.
-Retrieve Data:
-
-Use the provided dataset with fields (Title, Price, Brand, Model, etc.) to match the user's requirements and budget.
-Narrow down the choices based on the specifications mentioned by the user.
-Recommend Laptops:
-
-Present a list of 3-5 laptop models that fit the user's requirements and budget.
-For each recommendation, provide the following details:
-Model Name and Brand
-Price in INR
-Key Specifications (e.g., Processor, RAM, Storage, Display, Battery Life, etc.)
-Follow-up:
-
-Ask if the user needs more information or if they would like to see more options.
-Offer to help with any other questions they might have about the recommendations.
-
-{context}"""
-qa_prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", qa_system_prompt),
-        MessagesPlaceholder("chat_history"),
-        ("human", "{input}"),
-    ]
-)
-
+qa_prompt = hub.pull("gadgetfinder")
 question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
 rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 
@@ -140,7 +100,7 @@ if user_prompt is not None:
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Loading..."):
-            ai_response = conversational_rag_chain.invoke({"input": user_prompt},config={"configurable": {"session_id": "abc123"}},)["answer"]
-            st.write(ai_response)
-    new_ai_message = {"role": "assistant", "content": ai_response}
+            ai_response = conversational_rag_chain.invoke({"input": user_prompt},config={"configurable": {"session_id": "abc123"}},)
+            st.write(ai_response["answer"])
+    new_ai_message = {"role": "assistant", "content": ai_response["answer"]}
     st.session_state.messages.append(new_ai_message)
