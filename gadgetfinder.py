@@ -10,6 +10,7 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain import hub
+import re
 import google.generativeai as genai
 import streamlit as st
 
@@ -37,7 +38,6 @@ history_aware_retriever = create_history_aware_retriever(
 qa_prompt = hub.pull("gadgetfinder")
 question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
 rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
-
 
 if 'store' not in st.session_state:
     st.session_state['store'] = {}
@@ -100,7 +100,7 @@ if user_prompt is not None:
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Loading..."):
-            ai_response = conversational_rag_chain.invoke({"input": user_prompt},config={"configurable": {"session_id": "abc123"}},)
-            st.write(ai_response["answer"])
-    new_ai_message = {"role": "assistant", "content": ai_response["answer"]}
+            ai_response = conversational_rag_chain.invoke({"input": user_prompt},config={"configurable": {"session_id": "abc123"}},)["answer"]
+            st.write(ai_response)
+    new_ai_message = {"role": "assistant", "content": ai_response}
     st.session_state.messages.append(new_ai_message)
