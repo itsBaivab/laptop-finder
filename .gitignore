@@ -1,3 +1,3 @@
 .venv
-api_key.txt
-prompt.txt
+.env
+trial.py

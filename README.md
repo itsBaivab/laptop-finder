@@ -37,15 +37,7 @@ Welcome to **Laptop Finder**, a webapp chatbot designed to provide laptop recomm
     ```bash
     pip install -r requirements.txt
     ```
-4. Set the environment variable `GOOGLE_API_KEY` with your own Gemini API key which you can get for free from [here](https://aistudio.google.com/):
-    - **Windows**:
-        ```powershell
-        $env:GOOGLE_API_KEY = "your_gemini_api_key"
-        ```
-    - **Linux**:
-        ```bash
-        export GOOGLE_API_KEY="your_gemini_api_key"
-        ```
+4. Create your own .env in the root directory and put your own Groq api key, langchain hub api key, google api key, google cse id. 
 
 ## Usage
 
